@@ -210,3 +210,25 @@ def desactivar_usuario(id_usuario):
 
     finally:
         conexion.close()
+
+def obtener_usuario_para_login(correo):
+    conexion = Database().get_connection()
+
+    try:
+        cursor = conexion.cursor()
+        cursor.execute("""
+            SELECT id_usuario,
+                   id_rol,
+                   correo,
+                   password_hash
+            FROM usuario
+            WHERE correo = %s
+              AND estado = TRUE
+        """, (correo,))
+
+        return convertir_diccionario(
+            cursor, cursor.fetchone()
+        )
+
+    finally:
+        conexion.close()
